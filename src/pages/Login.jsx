@@ -8,31 +8,20 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (login(username, password)) {
+    const success = await login(username, password);
+    if (success) {
       navigate('/dashboard');
     }
   };
 
   return (
-    <section className="cart-section"> {/* Переиспользуем стиль */}
-      <div className="cart-title">Вход в личный кабинет</div>
+    <section className="cart-section">
+      <div className="cart-title">Вход</div>
       <form onSubmit={handleLogin} style={{ maxWidth: '300px', margin: '0 auto' }}>
-        <input
-          type="text"
-          placeholder="Логин"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={{ width: '100%', marginBottom: '12px', padding: '8px', borderRadius: '4px' }}
-        />
-        <input
-          type="password"
-          placeholder="Пароль"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ width: '100%', marginBottom: '12px', padding: '8px', borderRadius: '4px' }}
-        />
+        <input type="text" placeholder="Логин" value={username} onChange={e => setUsername(e.target.value)} required />
+        <input type="password" placeholder="Пароль" value={password} onChange={e => setPassword(e.target.value)} required />
         <button type="submit" className="checkout-btn" style={{ width: '100%' }}>
           Войти
         </button>
