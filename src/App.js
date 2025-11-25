@@ -1,3 +1,4 @@
+// App.js (обновлённый: добавлен маршрут для страницы отзывов)
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './contexts/CartContext';
 import { AuthProvider } from './contexts/AuthContext';
@@ -6,9 +7,10 @@ import Home from './pages/Home';
 import CartPage from './pages/CartPage';
 import Notification from './components/Notification';
 import Login from './pages/Login';
-import Register from './pages/Register'; // НОВОЕ
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import ReviewsPage from './pages/ReviewsPage'; // НОВОЕ
 
 const Footer = () => (
   <footer>
@@ -34,7 +36,8 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} /> {/* НОВОЕ */}
+              <Route path="/register" element={<Register />} />
+              <Route path="/reviews/:gameId" element={<ReviewsPage />} /> {/* НОВОЕ */}
               <Route
                 path="/dashboard"
                 element={

@@ -1,5 +1,6 @@
-// GameCard.jsx
+// GameCard.jsx (обновлённый: две кнопки в controls-row)
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const GameCard = ({ game, addToCart }) => {
   return (
@@ -22,11 +23,14 @@ const GameCard = ({ game, addToCart }) => {
         </div>
       </div>
 
-      {/* === ТОЛЬКО КНОПКА КУПИТЬ — НА ВСЁ МЕСТО === */}
-      <div className="controls-row">
-        <button className="buy-btn" onClick={() => addToCart(game)}>
+      {/* === ДВЕ КНОПКИ: КУПИТЬ + ОТЗЫВЫ (делят пространство) === */}
+      <div className="controls-row" style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <button className="buy-btn" onClick={() => addToCart(game)} style={{ flex: 1, marginRight: '8px' }}>
           Купить
         </button>
+        <Link to={`/reviews/${game.id}`} className="reviews-btn" style={{ flex: 1, textDecoration: 'none', color: '#23272e', background: '#66c0f4', borderRadius: '6px', textAlign: 'center', padding: '8px' }}>
+          Отзывы
+        </Link>
       </div>
     </div>
   );

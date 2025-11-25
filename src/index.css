@@ -284,12 +284,14 @@ body {
   text-align: center;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
 .steam-game-card:hover .game-desc p {
   -webkit-line-clamp: unset;
+  line-clamp: unset;
   overflow: visible;
   display: block;
 }
@@ -712,3 +714,5 @@ footer a:hover {
     height: 460px;
   }
 }
+
+
