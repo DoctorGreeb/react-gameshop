@@ -64,7 +64,7 @@ node server.js
 
 ### Клиентская часть
 ```bash
-npm install   # один раз
+npm install  
 npm start
 ```
 Откроется http://localhost:3000
