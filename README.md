@@ -41,14 +41,14 @@ HAZE — это онлайн-магазин игр, разработанный �
 - CORS  
 
 ## Структура проекта
-src/
-components/      GameCard, CartItem, Header, Notification, ProtectedRoute
-contexts/        CartContext.jsx, AuthContext.jsx
-data/            games.js (массив игр)
-pages/           Home, CartPage, ReviewsPage, Dashboard, Login, Register
-App.js
-index.js
-index.css
+src/  
+components/      GameCard, CartItem, Header, Notification, ProtectedRoute  
+contexts/        CartContext.jsx, AuthContext.jsx  
+data/            games.js (массив игр)  
+pages/           Home, CartPage, ReviewsPage, Dashboard, Login, Register  
+App.js  
+index.js  
+index.css  
 server.js        бэкенд (Express + SQLite)
 
 ## Запуск проекта
