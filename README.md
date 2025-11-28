@@ -1,70 +1,68 @@
-# Getting Started with Create React App
+# HAZE — Магазин цифровых игр
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+О проекте
+HAZE — это онлайн-магазин игр, разработанный с использованием React.js и Node.js. Приложение позволяет просматривать игры, добавлять их в корзину, оформлять заказы и оставлять отзывы. Также имеется личный кабинет с историей покупок и аналитикой расходов.
 
-## Available Scripts
+Функционал
+Пользователи могут просматривать каталог игр, добавлять игры в корзину и оформлять заказы. Для авторизованных пользователей доступна возможность добавления, редактирования и удаления отзывов. Личный кабинет включает графики расходов и распределения заказов по играм.
 
-In the project directory, you can run:
+Технологии
+Проект использует React.js для клиентской части, Node.js и Express для серверной части, SQLite для хранения данных. Для аутентификации применяются токены и bcrypt для хэширования паролей. Визуализация данных в личном кабинете осуществляется с помощью react-chartjs-2.
 
-### `npm start`
+Безопасность
+Все данные пользователя защищены с помощью аутентификации на основе токенов. Приложение использует защищённые маршруты для личных данных, а также хэширует пароли с помощью bcrypt. Токены хранятся в локальном хранилище для безопасного доступа к личному кабинету.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Адаптивность
+Приложение адаптировано для работы на различных устройствах с использованием подхода "Mobile First". Стили с медиа-запросами обеспечивают корректное отображение на экранах от мобильных до десктопных. Пользовательский интерфейс интуитивно понятен и удобен для всех типов устройств.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Возможности
 
-### `npm test`
+- Каталог игр с видео-превью и описаниями  
+- Добавление товаров в корзину (сохранение в localStorage)  
+- Регистрация / вход / выход (JWT + bcrypt)  
+- Оформление заказа с сохранением на сервере  
+- Страница отзывов к каждой игре (добавление, редактирование, удаление — только свои)  
+- Личный кабинет с историей заказов и аналитикой (графики расходов и распределения покупок)  
+- Адаптивная вёрстка (mobile-first)  
+- Уведомления о действиях  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Клиентская часть
+- React 18  
+- React Router v6  
+- Context API (CartContext, AuthContext)  
+- Chart.js + react-chartjs-2 (графики в личном кабинете)  
+- CSS (mobile-first, медиа-запросы)  
 
-### `npm run build`
+### Серверная часть
+- Node.js + Express  
+- SQLite (база данных)  
+- JWT-аутентификация  
+- bcrypt (хэширование паролей)  
+- CORS  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Структура проекта
+src/
+├── components/      GameCard, CartItem, Header, Notification, ProtectedRoute
+├── contexts/        CartContext.jsx, AuthContext.jsx
+├── data/            games.js (массив игр)
+├── pages/           Home, CartPage, ReviewsPage, Dashboard, Login, Register
+├── App.js
+├── index.js
+├── index.css
+server.js            бэкенд (Express + SQLite)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Запуск проекта
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 1. Сервер
+```bash
+cd путь_к_проекту
+node server.js
+```
+Сервер запустится на http://localhost:5000
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Клиентская часть
+```bash
+npm install   # один раз
+npm start
+```
+Откроется http://localhost:3000
