@@ -6,9 +6,7 @@ export default function Footer() {
       <a href="https://www.google.com" target="_blank" rel="noopener noreferrer">
         Поиск в Google
       </a>
-      <a href="contacts.html" target="_blank">
-        Контакты
-      </a>
+      <Link to="/contacts">Контакты</Link>
       <Link to="/">Вернуться в магазин</Link>
     </footer>
   );

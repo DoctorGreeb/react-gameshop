@@ -12,18 +12,8 @@ import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import ReviewsPage from './pages/ReviewsPage';
 import AdminPanel from './pages/AdminPanel'; // НОВОЕ
-
-const Footer = () => (
-  <footer>
-    <a href="https://www.google.com" target="_blank" rel="noopener noreferrer">
-      Поиск в Google
-    </a>
-    <a href="contacts.html" target="_blank">
-      Контакты
-    </a>
-    <a href="/">Вернуться в магазин</a>
-  </footer>
-);
+import Contacts from './pages/Contacts';
+import Footer from './components/Footer';
 
 export default function App() {
   return (
@@ -39,6 +29,7 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/reviews/:gameId" element={<ReviewsPage />} />
+              <Route path="/contacts" element={<Contacts />} />
               <Route
                 path="/dashboard"
                 element={
@@ -57,6 +48,7 @@ export default function App() {
               /> {/* НОВОЕ */}
             </Routes>
             <Footer />
+
           </div>
         </CartProvider>
       </AuthProvider>
