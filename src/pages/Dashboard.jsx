@@ -1,37 +1,66 @@
+// src/pages/Dashboard.jsx
 import { useCart } from '../contexts/CartContext';
 import { Bar, Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 import { useMemo } from 'react';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
 export default function Dashboard() {
-  const { orders } = useCart();
+  const { orders = [] } = useCart(); // ← ГЛАВНОЕ ИСПРАВЛЕНИЕ: значение по умолчанию
+
+  // Защита от null/undefined
+  const safeOrders = Array.isArray(orders) ? orders : [];
 
   const monthlySpending = useMemo(() => {
     const months = {};
-    orders.forEach(order => {
+    safeOrders.forEach(order => {
+      // Проверяем, есть ли items и created_at
+      if (!order.items || !order.created_at) return;
       const month = new Date(order.created_at).toLocaleString('ru', { month: 'short', year: 'numeric' });
-      months[month] = (months[month] || 0) + order.total;
+      months[month] = (months[month] || 0) + (order.total || 0);
     });
+
+    const labels = Object.keys(months);
     return {
-      labels: Object.keys(months),
-      datasets: [{ label: 'Расходы', data: Object.values(months), backgroundColor: '#66c0f4' }]
+      labels: labels.length ? labels : ['Нет данных'],
+      datasets: [{
+        label: 'Расходы',
+        data: labels.length ? Object.values(months) : [0],
+        backgroundColor: '#66c0f4'
+      }]
     };
-  }, [orders]);
+  }, [safeOrders]);
 
   const gameDistribution = useMemo(() => {
     const games = {};
-    orders.forEach(order => {
+    safeOrders.forEach(order => {
+      if (!order.items || !Array.isArray(order.items)) return;
       order.items.forEach(item => {
-        games[item.title] = (games[item.title] || 0) + item.price * item.quantity;
+        if (item.title && item.price !== undefined) {
+          games[item.title] = (games[item.title] || 0) + item.price * (item.quantity || 1);
+        }
       });
     });
+
+    const labels = Object.keys(games);
     return {
-      labels: Object.keys(games),
-      datasets: [{ data: Object.values(games), backgroundColor: ['#66c0f4', '#417a9b', '#e74c3c', '#f39c12', '#2c313a'] }]
+      labels: labels.length ? labels : ['Нет покупок'],
+      datasets: [{
+        data: labels.length ? Object.values(games) : [1],
+        backgroundColor: ['#66c0f4', '#417a9b', '#e74c3c', '#f39c12', '#2c313a', '#9b59b6']
+      }]
     };
-  }, [orders]);
+  }, [safeOrders]);
 
   return (
     <section className="cart-section">
@@ -55,7 +84,7 @@ export default function Dashboard() {
 
       <div className="dashboard-table">
         <h3>История заказов</h3>
-        {orders.length === 0 ? (
+        {safeOrders.length === 0 ? (
           <p style={{ textAlign: 'center', color: '#888' }}>Нет заказов</p>
         ) : (
           <table>
@@ -63,11 +92,15 @@ export default function Dashboard() {
               <tr><th>Дата</th><th>Сумма</th><th>Игры</th></tr>
             </thead>
             <tbody>
-              {orders.map(order => (
+              {safeOrders.map(order => (
                 <tr key={order.id}>
-                  <td>{new Date(order.created_at).toLocaleDateString()}</td>
+                  <td>{new Date(order.created_at).toLocaleDateString('ru-RU')}</td>
                   <td>{order.total} руб.</td>
-                  <td>{order.items.map(i => i.title).join(', ')}</td>
+                  <td>
+                    {Array.isArray(order.items)
+                      ? order.items.map(i => i.title).join(', ')
+                      : '—'}
+                  </td>
                 </tr>
               ))}
             </tbody>

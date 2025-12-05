@@ -1,18 +1,27 @@
+// src/contexts/AuthContext.jsx — ПОЛНОСТЬЮ РАБОЧАЯ ВЕРСИЯ
 import { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
-
-const API_URL = 'http://localhost:5000'; // ← поменяй на свой сервер, если на другом порту/домене
+const API_URL = 'http://localhost:5000';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Восстановление пользователя при загрузке
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const savedUsername = localStorage.getItem('username');
-    if (token && savedUsername) {
-      setUser({ username: savedUsername });
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setUser({
+          id: payload.id,
+          username: payload.username,
+          is_admin: !!payload.is_admin
+        });
+      } catch (e) {
+        console.error('Неверный токен');
+      }
     }
     setLoading(false);
   }, []);
@@ -28,8 +37,16 @@ export function AuthProvider({ children }) {
 
     if (res.ok) {
       localStorage.setItem('token', data.token);
-      localStorage.setItem('username', data.username);
-      setUser({ username: data.username });
+
+      // Расшифровываем токен
+      const payload = JSON.parse(atob(data.token.split('.')[1]));
+      const fullUser = {
+        id: payload.id,
+        username: payload.username,
+        is_admin: !!payload.is_admin
+      };
+
+      setUser(fullUser);
       return true;
     } else {
       alert(data.error || 'Ошибка входа');
@@ -44,12 +61,10 @@ export function AuthProvider({ children }) {
       body: JSON.stringify({ username, password })
     });
 
-    const data = await res.json();
-
     if (res.ok || res.status === 201) {
-      // Автологин после регистрации
       return await login(username, password);
     } else {
+      const data = await res.json();
       alert(data.error || 'Ошибка регистрации');
       return false;
     }
@@ -57,7 +72,6 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('username');
     setUser(null);
   };
 

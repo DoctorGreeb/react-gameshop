@@ -1,4 +1,4 @@
-// App.js (обновлённый: добавлен маршрут для страницы отзывов)
+// App.js (обновлённый: добавлен маршрут для админ-панели)
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './contexts/CartContext';
 import { AuthProvider } from './contexts/AuthContext';
@@ -10,7 +10,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
-import ReviewsPage from './pages/ReviewsPage'; // НОВОЕ
+import ReviewsPage from './pages/ReviewsPage';
+import AdminPanel from './pages/AdminPanel'; // НОВОЕ
 
 const Footer = () => (
   <footer>
@@ -37,7 +38,7 @@ export default function App() {
               <Route path="/cart" element={<CartPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/reviews/:gameId" element={<ReviewsPage />} /> {/* НОВОЕ */}
+              <Route path="/reviews/:gameId" element={<ReviewsPage />} />
               <Route
                 path="/dashboard"
                 element={
@@ -46,6 +47,14 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AdminPanel />
+                  </ProtectedRoute>
+                }
+              /> {/* НОВОЕ */}
             </Routes>
             <Footer />
           </div>
