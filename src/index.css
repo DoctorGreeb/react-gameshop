@@ -1,6 +1,207 @@
 /* ========================================
    ГЛОБАЛЬНЫЕ СТИЛИ — MOBILE FIRST
    ======================================== */
+/* ГЛОБАЛЬНАЯ ПОДДЕРЖКА ТЕМ — 2025 EDITION */
+:root {
+  --bg: #0d0f14;
+  --accent: #66c0f4;
+  --text: #e0e6ed;
+  --card: #181a20;
+  --card-hover: #1f232b;
+  --border: #333333;
+}
+
+/* Применяем ко всему */
+html, body, #root, .App {
+  background: var(--bg) !important;
+  color: var(--text);
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* ВСЕ СЕКЦИИ И РОДИТЕЛИ КАРТОЧЕК */
+.steam-section,
+.cart-section,
+.reviews-section,
+.dashboard-section,
+section {
+  background: var(--bg) !important;
+  min-height: 100vh;
+}
+
+/* САМИ КАРТОЧКИ ИГР */
+.steam-game-card {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.steam-game-card:hover {
+  background: var(--card-hover) !important;
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+  border-color: var(--accent)44 !important;
+}
+
+/* ФОН ПОД ОПИСАНИЕМ — САМОЕ ВАЖНОЕ! */
+.steam-game-card .game-content {
+  background: linear-gradient(180deg, transparent 0%, var(--card) 30%) !important;
+  transition: all 0.4s ease;
+}
+
+.steam-game-card:hover .game-content {
+  background: linear-gradient(180deg, transparent 0%, var(--card-hover) 30%) !important;
+}
+
+/* КНОПКИ "КУПИТЬ" И "ОТЗЫВЫ" */
+.buy-btn,
+.reviews-btn {
+  background: var(--accent) !important;
+  color: #23272e !important;
+  font-weight: bold;
+  border: none !important;
+  border-radius: 8px;
+  padding: 10px 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.buy-btn:hover,
+.reviews-btn:hover {
+  background: var(--accent) !important;
+  filter: brightness(1.18);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 20px var(--accent)66;
+}
+
+/* ========================================
+   КНОПКИ В АДМИНКЕ — ГАРАНТИРОВАННО ВИДНЫ НА ЛЮБОЙ ТЕМЕ
+   ======================================== */
+.admin-edit-btn {
+  flex: 1;
+  background: #f39c12 !important;
+  color: white !important;
+  border: none !important;
+  padding: 10px !important;
+  border-radius: 8px !important;
+  font-weight: bold !important;
+  cursor: pointer;
+  height: 40px;
+  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+  transition: all 0.3s ease;
+}
+
+.admin-delete-btn {
+  flex: 1;
+  background: #e74c3c !important;
+  color: white !important;
+  border: none !important;
+  padding: 10px !important;
+  border-radius: 8px !important;
+  font-weight: bold !important;
+  cursor: pointer;
+  height: 40px;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+  transition: all 0.3s ease;
+}
+
+/* При наведении — красиво и заметно */
+.admin-edit-btn:hover {
+  background: #e67e22 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(243, 156, 18, 0.6);
+}
+
+.admin-delete-btn:hover {
+  background: #c0392b !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(231, 76, 60, 0.6);
+}
+
+/* КОРЗИНА, ОТЗЫВЫ, ЛИЧНЫЙ КАБИНЕТ — ВСЁ ТОЖЕ МЕНЯЕТСЯ */
+.cart-item,
+.review-card,
+.dashboard-card,
+.chart-card {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px;
+  transition: all 0.4s ease;
+}
+
+.cart-item:hover,
+.review-card:hover,
+.dashboard-card:hover {
+  background: var(--card-hover) !important;
+  border-color: var(--accent)44 !important;
+}
+
+/* Секции */
+.steam-section,
+.cart-section,
+.reviews-section,
+.dashboard-section {
+  background: var(--bg);
+  padding: 40px 20px;
+}
+
+/* Кнопки */
+button, .buy-btn, .checkout-btn {
+  background: var(--accent) !important;
+  color: #23272e !important;
+  transition: 0.3s;
+}
+
+button:hover, .buy-btn:hover {
+  transform: translateY(-2px);
+}
+
+  
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+:root {
+  --bg: #0d0f14;
+  --accent: #66c0f4;
+  --text: #e0e6ed;
+  --card: #181a20;
+}
+
+html,
+body,
+#root,
+.App {
+  background: var(--bg) !important;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+header,
+.cart-section,
+section,
+.steam-section {
+  background: var(--bg);
+}
+
+button,
+input,
+textarea,
+select {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border-color: var(--accent)44 !important;
+}
+
+button:hover {
+  background: var(--accent)22;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -130,7 +331,8 @@ body {
 
 .delete-btn-wrapper {
   display: flex;
-  justify-content: center;   /* выравнивает кнопку по центру */
+  justify-content: center;
+  /* выравнивает кнопку по центру */
   width: 100%;
 }
 
@@ -152,13 +354,23 @@ body {
   border-radius: 6px;
   z-index: 1000;
   font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   animation: fadeInOut 2s forwards;
 }
 
 @keyframes fadeInOut {
-  0%, 100% { opacity: 0; transform: translateX(100%); }
-  20%, 80% { opacity: 1; transform: translateX(0); }
+
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  20%,
+  80% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* ========================================
@@ -171,7 +383,7 @@ body {
   padding: 16px;
   background: #23272e;
   border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
 .steam-title,
@@ -202,7 +414,7 @@ body {
   max-width: 300px;
   height: 420px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -212,7 +424,7 @@ body {
 .steam-game-card:hover,
 .cart-item:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
 }
 
 /* === ВИДЕО === */
@@ -304,8 +516,10 @@ body {
 }
 
 .buy-btn {
-  flex: 1;                         /* ← РАСТЯГИВАЕТ НА ВСЮ ШИРИНУ */
-  width: 100%;                     /* ← на всякий случай */
+  flex: 1;
+  /* ← РАСТЯГИВАЕТ НА ВСЮ ШИРИНУ */
+  width: 100%;
+  /* ← на всякий случай */
   height: 40px;
   font-size: 1em;
   font-weight: bold;
@@ -443,7 +657,7 @@ form p a:hover {
   background: #2c313a;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   flex: 1;
   min-width: 0;
 }
@@ -661,6 +875,7 @@ footer a:hover {
    DESKTOP — от 768px
    ================================= */
 @media (min-width: 768px) {
+
   .steam-section,
   .cart-section,
   .dashboard-section {
@@ -720,6 +935,7 @@ footer a:hover {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
