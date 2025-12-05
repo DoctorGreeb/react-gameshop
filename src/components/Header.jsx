@@ -46,6 +46,8 @@ export default function Header() {
     return saved ? JSON.parse(saved) : themes[0];
   });
 
+  
+
   // Применяем тему + ФИКС ЛОГОТИПА
   useEffect(() => {
     const root = document.documentElement;
@@ -86,6 +88,20 @@ export default function Header() {
       setCurrentDisplayName(savedName || user.username);
     }
   }, [user]);
+
+  useEffect(() => {
+  if (!user) {
+    // Если пользователь вышел — сразу сбрасываем имя и аватар
+    setCurrentDisplayName('Гость');
+    setCurrentAvatar('https://via.placeholder.com/40/333/fff?text=U');
+  } else {
+    // При входе — берём из localStorage, если есть
+    const savedName = localStorage.getItem('displayName');
+    const savedAvatar = localStorage.getItem('userAvatar');
+    setCurrentDisplayName(savedName || user.username || 'Гость');
+    setCurrentAvatar(savedAvatar || 'https://via.placeholder.com/40/333/fff?text=U');
+  }
+}, [user]);
 
   // Закрытие меню
   useEffect(() => {

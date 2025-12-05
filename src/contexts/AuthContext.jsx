@@ -71,9 +71,16 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-  };
+  // Удаляем ВСЁ, что связано с пользователем
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  localStorage.removeItem('displayName');
+  localStorage.removeItem('userAvatar');
+  localStorage.removeItem('userProfile'); // если есть
+
+  setUser(null);
+
+};
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout, loading }}>
