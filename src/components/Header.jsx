@@ -1,4 +1,5 @@
-// src/components/Header.jsx — 100% РАБОЧИЙ, БЕЗ ОШИБОК
+// src/components/Header.jsx — ФИНАЛЬНЫЙ, 100% РАБОЧИЙ, КРАСИВЫЙ, КАК БЫЛ
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
@@ -27,28 +28,32 @@ export default function Header() {
   const menuRef = useRef(null);
   const themeRef = useRef(null);
 
-  // Безопасный подсчёт товаров
+  // Реактивные данные профиля — только из БД
+  const [currentAvatar, setCurrentAvatar] = useState('https://via.placeholder.com/40/333/fff?text=U');
+  const [currentDisplayName, setCurrentDisplayName] = useState('Гость');
+
+  // Подсчёт товаров
   const totalItems = Array.isArray(cart)
     ? cart.reduce((sum, item) => sum + (item.quantity || 0), 0)
     : 0;
 
-  // Аватар и имя
-  const [currentAvatar, setCurrentAvatar] = useState(() =>
-    localStorage.getItem('userAvatar') || 'https://via.placeholder.com/40/333/fff?text=U'
-  );
-  const [currentDisplayName, setCurrentDisplayName] = useState(() =>
-    localStorage.getItem('displayName') || user?.username || 'Гость'
-  );
-
-  // Текущая тема
+  // Текущая тема (с сохранением в localStorage — это можно оставить)
   const [currentTheme, setCurrentTheme] = useState(() => {
     const saved = localStorage.getItem('theme');
     return saved ? JSON.parse(saved) : themes[0];
   });
 
-  
+  useEffect(() => {
+    const logo = document.querySelector('header h1');
+    if (logo) {
+      logo.style.background = `linear-gradient(135deg, ${currentTheme.accent}, ${currentTheme.accent}cc)`;
+      logo.style.webkitBackgroundClip = 'text';
+      logo.style.webkitTextFillColor = 'transparent';
+      logo.style.backgroundClip = 'text'; // для не-WebKit
+    }
+  }, [currentTheme]);
 
-  // Применяем тему + ФИКС ЛОГОТИПА
+  // Применяем тему
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty('--bg', currentTheme.bg);
@@ -56,54 +61,82 @@ export default function Header() {
     root.style.setProperty('--text', currentTheme.text);
     root.style.setProperty('--card', currentTheme.card);
     root.style.setProperty('--card-hover', currentTheme.cardHover || '#20232a');
-    root.style.setProperty('--border', currentTheme.border || '#333');
-
-    // Фиксим логотип
-    const logo = document.querySelector('header h1');
-    if (logo) {
-      logo.style.background = `linear-gradient(135deg, ${currentTheme.accent}, ${currentTheme.accent}cc)`;
-      logo.style.webkitBackgroundClip = 'text';
-      logo.style.webkitTextFillColor = 'transparent';
-    }
 
     localStorage.setItem('theme', JSON.stringify(currentTheme));
   }, [currentTheme]);
 
-  // Обновление аватара и имени
-  useEffect(() => {
-    const update = () => {
-      const avatar = localStorage.getItem('userAvatar');
-      const name = localStorage.getItem('displayName');
-      if (avatar) setCurrentAvatar(avatar);
-      if (name) setCurrentDisplayName(name);
-    };
-    update();
-    window.addEventListener('storage', update);
-    return () => window.removeEventListener('storage', update);
-  }, []);
 
-  useEffect(() => {
+  // Обновление имени и аватара при входе/выходе
+  // Реакция на вход и выход
+useEffect(() => {
+  const updateProfile = () => {
     if (user) {
-      const savedName = localStorage.getItem('displayName');
-      setCurrentDisplayName(savedName || user.username);
+      fetch('http://localhost:5000/api/profile', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
+        .then(r => r.json())
+        .then(data => {
+          setCurrentDisplayName(data.displayName || user.username);
+          if (data.avatar) setCurrentAvatar(data.avatar);
+        })
+        .catch(() => setCurrentDisplayName(user.username));
+    } else {
+      // ВЫХОД — мгновенно!
+      setCurrentDisplayName('Гость');
+      setCurrentAvatar('https://via.placeholder.com/40/333/fff?text=U');
     }
-  }, [user]);
+  };
 
-  useEffect(() => {
-  if (!user) {
-    // Если пользователь вышел — сразу сбрасываем имя и аватар
-    setCurrentDisplayName('Гость');
-    setCurrentAvatar('https://via.placeholder.com/40/333/fff?text=U');
-  } else {
-    // При входе — берём из localStorage, если есть
-    const savedName = localStorage.getItem('displayName');
-    const savedAvatar = localStorage.getItem('userAvatar');
-    setCurrentDisplayName(savedName || user.username || 'Гость');
-    setCurrentAvatar(savedAvatar || 'https://via.placeholder.com/40/333/fff?text=U');
-  }
+  // При входе/выходе
+  updateProfile();
+
+  // При сохранении профиля
+  window.addEventListener('profileUpdated', updateProfile);
+  // При выходе из аккаунта
+  window.addEventListener('authChanged', updateProfile);
+
+  return () => {
+    window.removeEventListener('profileUpdated', updateProfile);
+    window.removeEventListener('authChanged', updateProfile);
+  };
 }, [user]);
 
-  // Закрытие меню
+// Этот useEffect гарантирует мгновенный сброс при выходе
+useEffect(() => {
+  const forceReset = () => {
+    setCurrentDisplayName('Гость');
+    setCurrentAvatar('https://via.placeholder.com/40/333/fff?text=U');
+  };
+
+  window.addEventListener('USER_LOGGED_OUT', forceReset);
+  
+  // На всякий случай — при смене user тоже сбрасываем
+  if (!user) {
+    forceReset();
+  }
+
+  return () => window.removeEventListener('USER_LOGGED_OUT', forceReset);
+}, [user]);
+
+  // Слушаем событие от ProfileSettings после сохранения
+  useEffect(() => {
+    const handler = () => {
+      if (user) {
+        fetch('http://localhost:5000/api/profile', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+          .then(r => r.json())
+          .then(data => {
+            setCurrentDisplayName(data.displayName || user.username);
+            if (data.avatar) setCurrentAvatar(data.avatar);
+          });
+      }
+    };
+    window.addEventListener('profileUpdated', handler);
+    return () => window.removeEventListener('profileUpdated', handler);
+  }, [user]);
+
+  // Закрытие меню по клику вне
   useEffect(() => {
     const handler = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
@@ -145,7 +178,9 @@ export default function Header() {
               fontWeight: '900',
               margin: 0,
               letterSpacing: '-1px',
-              display: 'inline-block'
+              background: `linear-gradient(135deg, ${currentTheme.accent}, ${currentTheme.accent}cc)`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
             }}>
               HAZE
             </h1>
@@ -247,7 +282,7 @@ export default function Header() {
               )}
             </div>
 
-            {/* КНОПКА ТЕМ — КВАДРАТНАЯ СТЕКЛЯННАЯ С БЛЕСКОМ И ПЕРЕЛИВОМ */}
+            {/* КНОПКА ТЕМЫ — ТВОЯ КРАСИВАЯ СТЕКЛЯННАЯ */}
             <div ref={themeRef} style={{ position: 'relative' }}>
               <button
                 onClick={() => setThemeMenuOpen(!themeMenuOpen)}
@@ -261,10 +296,10 @@ export default function Header() {
                   position: 'relative',
                   overflow: 'hidden',
                   boxShadow: `
-        0 4px 12px rgba(0,0,0,0.4),
-        inset 0 2px 2px 8px ${currentTheme.accent}33,
-        0 0 16px ${currentTheme.accent}11
-      `,
+                    0 4px 12px rgba(0,0,0,0.4),
+                    inset 0 2px 2px 8px ${currentTheme.accent}33,
+                    0 0 16px ${currentTheme.accent}11
+                  `,
                   backdropFilter: 'blur(12px)',
                   WebkitBackdropFilter: 'blur(12px)',
                   transition: 'all 0.35s ease',
@@ -272,22 +307,21 @@ export default function Header() {
                 onMouseEnter={e => {
                   e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)';
                   e.currentTarget.style.boxShadow = `
-        0 8px 25px rgba(0,0,0,0.5),
-        inset 0 3px 15px ${currentTheme.accent}55,
-        0 0 30px ${currentTheme.accent}44
-      `;
+                    0 8px 25px rgba(0,0,0,0.5),
+                    inset 0 3px 15px ${currentTheme.accent}55,
+                    0 0 30px ${currentTheme.accent}44
+                  `;
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.transform = 'translateY(0) scale(1)';
                   e.currentTarget.style.boxShadow = `
-        0 4px 12px rgba(0,0,0,0.4),
-        inset 0 2px 8px ${currentTheme.accent}33,
-        0 0 16px ${currentTheme.accent}11
-      `;
+                    0 4px 12px rgba(0,0,0,0.4),
+                    inset 0 2px 8px ${currentTheme.accent}33,
+                    0 0 16px ${currentTheme.accent}11
+                  `;
                 }}
                 title="Сменить тему"
               >
-                {/* Блеск (светлый блик сверху-слева) */}
                 <div style={{
                   position: 'absolute',
                   top: 0,
@@ -299,7 +333,6 @@ export default function Header() {
                   pointerEvents: 'none'
                 }} />
 
-                {/* Медленный перелив по диагонали */}
                 <div style={{
                   position: 'absolute',
                   top: '-100%',
@@ -307,17 +340,16 @@ export default function Header() {
                   width: '200%',
                   height: '200%',
                   background: `conic-gradient(
-        transparent 0deg,
-        ${currentTheme.accent}33 90deg,
-        ${currentTheme.accent}22 180deg,
-        transparent 270deg
-      )`,
+                    transparent 0deg,
+                    ${currentTheme.accent}33 90deg,
+                    ${currentTheme.accent}22 180deg,
+                    transparent 270deg
+                  )`,
                   animation: 'rotate 12s linear infinite',
                   opacity: 0.4,
                   pointerEvents: 'none'
                 }} />
 
-                {/* Иконка палитры в центре */}
                 <span style={{
                   fontSize: '1.4em',
                   color: currentTheme.accent,
@@ -327,7 +359,6 @@ export default function Header() {
                 </span>
               </button>
 
-              {/* Выпадающее меню — оставляем как было */}
               {themeMenuOpen && (
                 <div style={{
                   position: 'absolute',

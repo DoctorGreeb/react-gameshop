@@ -27,6 +27,23 @@ db.serialize(() => {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
+
+//   db.run(`
+//   ALTER TABLE users ADD COLUMN display_name TEXT;
+// `);
+//   db.run(`
+//   ALTER TABLE users ADD COLUMN email TEXT;
+// `);
+//   db.run(`
+//   ALTER TABLE users ADD COLUMN city TEXT DEFAULT 'Ростов-на-Дону';
+// `);
+//   db.run(`
+//   ALTER TABLE users ADD COLUMN card_number TEXT;
+// `);
+//   db.run(`
+//   ALTER TABLE users ADD COLUMN avatar TEXT;
+// `);
+
   db.run(`CREATE TABLE IF NOT EXISTS orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -54,6 +71,8 @@ db.serialize(() => {
     video TEXT NOT NULL,
     desc TEXT NOT NULL
   )`);
+
+
 
   // === SEEDING ADMIN (исправлено!) ===
   const adminPassword = bcrypt.hashSync('admin', 10); // логин: admin | пароль: admin
@@ -219,6 +238,45 @@ app.put('/api/games/:id', authenticateToken, isAdmin, (req, res) => {
 
 app.delete('/api/games/:id', authenticateToken, isAdmin, (req, res) => {
   db.run(`DELETE FROM games WHERE id = ?`, [req.params.id], () => res.json({ message: 'Игра удалена' }));
+});
+
+// Получить профиль текущего пользователя
+app.get('/api/profile', authenticateToken, (req, res) => {
+  db.get(
+    `SELECT username, display_name, email, city, card_number, avatar 
+     FROM users WHERE id = ?`,
+    [req.user.id],
+    (err, row) => {
+      if (err) return res.status(500).json({ error: 'DB error' });
+      res.json({
+        displayName: row.display_name || row.username,
+        email: row.email || '',
+        city: row.city || 'Ростов-на-Дону',
+        cardNumber: row.card_number || '',
+        avatar: row.avatar || null
+      });
+    }
+  );
+});
+
+// Сохранить профиль
+app.put('/api/profile', authenticateToken, (req, res) => {
+  const { displayName, email, city, cardNumber, avatar } = req.body;
+
+  db.run(
+    `UPDATE users SET 
+      display_name = ?, 
+      email = ?, 
+      city = ?, 
+      card_number = ?, 
+      avatar = ?
+     WHERE id = ?`,
+    [displayName, email, city, cardNumber, avatar, req.user.id],
+    function(err) {
+      if (err) return res.status(500).json({ error: 'Ошибка сохранения' });
+      res.json({ message: 'Профиль сохранён' });
+    }
+  );
 });
 
 // Запуск
