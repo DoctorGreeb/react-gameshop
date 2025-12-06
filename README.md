@@ -49,10 +49,10 @@ HAZE — это онлайн-магазин игр, разработанный �
 ## Структура проекта
 ```bash
 src/
-├── components/      GameCard, CartItem, Header, Notification, ProtectedRoute
+├── components/      Cart, Footer, ProfileSettings, GameCard, CartItem, Header, Notification, ProtectedRoute
 ├── contexts/        CartContext.jsx, AuthContext.jsx
-├── data/            games.js (массив игр)
-├── pages/           Home, CartPage, ReviewsPage, Dashboard, Login, Register
+├── data/(удалено, теперь хранение в БД)  games.js (массив игр)
+├── pages/           AdminPanel, Contacts, Home, CartPage, ReviewsPage, Dashboard, Login, Register
 ├── App.js
 ├── index.js
 ├── index.css
