@@ -1,4 +1,4 @@
-// src/pages/ReviewsPage.jsx — ИДЕАЛЬНЫЕ ОТЗЫВЫ КАК В STEAM (100% красиво и логично)
+// src/pages/ReviewsPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -39,6 +39,7 @@ export default function ReviewsPage() {
 
   useEffect(() => {
     fetchReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId]);
 
   const handleSubmit = async (e) => {

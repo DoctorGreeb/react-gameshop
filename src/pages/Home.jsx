@@ -22,14 +22,41 @@ export default function Home() {
 
   return (
     <>
-      <header style={{ textAlign: 'center', marginBottom: '24px', backgroundColor: 'rgba(128,128,128,0.2)', padding: '20px' }}>
-        <h1>Добро пожаловать в цифровой магазин игр!</h1>
-        <p>
-          Здесь вы найдёте самые популярные и новые игры для любого настроения и компании. Открывайте для себя новинки,
-          участвуйте в акциях и пополняйте свою коллекцию!
-        </p>
-        <p>Jump into new phase, just use the HAZE!</p>
-      </header>
+      <header style={{
+  textAlign: 'center',
+  margin: '40px auto 60px',
+  maxWidth: '800px',
+  padding: '40px 20px'
+}}>
+  <h1 style={{
+    fontSize: '2.8em',
+    margin: '0 0 16px',
+    color: '#66c0f4',
+    fontWeight: 'bold'
+  }}>
+    HAZE Shop
+  </h1>
+
+  <p style={{
+    fontSize: '1.3em',
+    lineHeight: '1.6',
+    color: '#b0bec5',
+    margin: '0 auto 24px',
+    maxWidth: '640px'
+  }}>
+    Новые и популярные игры. Акции. Быстрая доставка ключей.
+  </p>
+
+  <p style={{
+    fontSize: '1.5em',
+    color: '#66c0f4',
+    margin: 0,
+    fontWeight: '500',
+    letterSpacing: '0.8px'
+  }}>
+    Jump into new phase, just use the HAZE!
+  </p>
+</header>
 
       <main className="steam-section">
         <div className="steam-title">Популярные игры</div>

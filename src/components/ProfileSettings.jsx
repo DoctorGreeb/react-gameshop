@@ -1,4 +1,4 @@
-// src/components/ProfileSettings.jsx — ЗАМЕНИТЬ ВЕСЬ ФАЙЛ НА ЭТОТ
+// src/components/ProfileSettings.jsx
 
 import { useState, useEffect, useRef } from 'react';
 import Cropper from 'react-easy-crop';

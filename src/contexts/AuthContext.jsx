@@ -1,4 +1,4 @@
-// src/contexts/AuthContext.jsx — ФИНАЛЬНАЯ ВЕРСИЯ (всё работает идеально)
+// src/contexts/AuthContext.jsx
 
 import { createContext, useContext, useState, useEffect } from 'react';
 

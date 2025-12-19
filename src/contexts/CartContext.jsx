@@ -1,3 +1,4 @@
+// src/contexts/CartContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 
 const CartContext = createContext();
@@ -6,7 +7,8 @@ const API_URL = 'http://localhost:5000';
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [notification, setNotification] = useState('');
+  const [notification, setNotification] = useState(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Загрузка корзины из localStorage
   useEffect(() => {
@@ -18,7 +20,7 @@ export function CartProvider({ children }) {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
-  // Загрузка заказов с сервера (только если авторизован)
+  // Загрузка заказов с сервера (если авторизован)
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -39,7 +41,7 @@ export function CartProvider({ children }) {
       }
       return [...prev, { ...game, quantity: 1, image: game.thumbnail }];
     });
-    showNotification(`Добавлено: ${game.title}`);
+    showNotification({ message: `Добавлено: ${game.title}`, type: 'success' });
   };
 
   const updateQuantity = (id, change) => {
@@ -49,17 +51,42 @@ export function CartProvider({ children }) {
     );
   };
 
-  const removeFromCart = (id) => setCart(prev => prev.filter(i => i.id !== id));
+  const removeFromCart = (id) => {
+    const item = cart.find(i => i.id === id);
+    setCart(prev => prev.filter(i => i.id !== id));
+    if (item) {
+      showNotification({ message: `Удалено: ${item.title}`, type: 'warning' });
+    }
+  };
 
+  // Открываем модалку подтверждения
   const clearCart = () => {
-    if (window.confirm('Очистить корзину?')) setCart([]);
+    setShowClearConfirm(true);
+  };
+
+  // Подтверждение очистки
+  const confirmClear = () => {
+    setCart([]);
+    showNotification({ message: 'Корзина очищена', type: 'warning' });
+    setShowClearConfirm(false);
+  };
+
+  // Отмена очистки
+  const cancelClear = () => {
+    setShowClearConfirm(false);
   };
 
   const checkout = async () => {
-    if (cart.length === 0) return alert('Корзина пуста!');
+    if (cart.length === 0) {
+      showNotification({ message: 'Корзина пуста!', type: 'warning' });
+      return;
+    }
 
     const token = localStorage.getItem('token');
-    if (!token) return alert('Войдите в аккаунт для оформления заказа!');
+    if (!token) {
+      showNotification({ message: 'Войдите в аккаунт для оформления заказа!', type: 'error' });
+      return;
+    }
 
     const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
@@ -73,27 +100,36 @@ export function CartProvider({ children }) {
     });
 
     if (res.ok) {
-      alert('Заказ успешно оформлен!');
+      showNotification({ message: 'Заказ успешно оформлен! Спасибо за покупку!', type: 'success' });
       setCart([]);
-      // Обновляем заказы
       const newOrders = await fetch(`${API_URL}/api/orders`, {
         headers: { Authorization: `Bearer ${token}` }
       }).then(r => r.json());
       setOrders(newOrders);
     } else {
-      alert('Ошибка при оформлении заказа');
+      showNotification({ message: 'Ошибка при оформлении заказа', type: 'error' });
     }
   };
 
   const showNotification = (msg) => {
     setNotification(msg);
-    setTimeout(() => setNotification(''), 2000);
+    setTimeout(() => setNotification(null), 3000); // 3 секунды для всех уведомлений
   };
 
   return (
     <CartContext.Provider value={{
-      cart, orders, addToCart, updateQuantity, removeFromCart,
-      clearCart, checkout, showNotification, notification
+      cart,
+      orders,
+      addToCart,
+      updateQuantity,
+      removeFromCart,
+      clearCart,
+      checkout,
+      showNotification,
+      notification,
+      showClearConfirm,
+      confirmClear,
+      cancelClear
     }}>
       {children}
     </CartContext.Provider>
